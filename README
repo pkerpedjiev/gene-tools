@@ -1,6 +1,7 @@
 wget -P ~/data/genbank-data/human/ http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/refGene.txt.gz
 gzcat ~/data/genbank-data/human/refGene.txt.gz | sort -k2 > ~/data/genbank-data/human/sorted_refGene
 
+
 grep ^9606 ~/data/genbank-data/gene2refseq | grep "Reference GRCh38" | grep "NC_" > ~/data/genbank-data/human/gene2refseq
 cat ~/data/genbank-data/gene_info | grep ^9606  > ~/data/genbank-data/human/gene_info
 grep ^9606 ~/data/genbank-data/gene2pubmed > ~/data/genbank-data/human/gene2pubmed
@@ -23,3 +24,7 @@ join -1 2 -2 2 ~/data/genbank-data/human/geneid_refseqid_count ~/data/genbank-da
 join -1 2 -2 1 -t $'\t' ~/data/genbank-data/human/gene_info ~/data/genbank-data/human/gene2pubmed-count | awk -F $'\t' '{print $1 "\t" $3 "\t" $10 "\t" $12 "\t" $16}' > ~/data/genbank-data/human/gene_subinfo_citation_count
 
 
+pip install negspy
+
+# convert chromosome positions to genome positions
+cat ~/data/genbank-data/human/geneid_refGene_count | chr_pos_to_genome_pos.py -c 3:5,3:6,3:7,3:8,3:10,3:11 > ~/data/genbank-data/human/genome_geneid_refGene_count
