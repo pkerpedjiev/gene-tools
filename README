@@ -1,0 +1,3 @@
+grep ^9606 ~/data/genbank-data/gene2refseq | grep "Reference GRCh38" | grep "NC_" > ~/data/genbank-data/human/human_gene2refseq
+cat ~/data/genbank-data/gene_info | grep ^9606  > ~/data/genbank-data/human/human_gene_info
+grep ^9606 ~/data/genbank-data/gene2pubmed > ~/data/genbank-data/human/human_gene2pubmed
