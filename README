@@ -1,3 +1,6 @@
+wget -P ~/data/genbank-data/human/ http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/refGene.txt.gz
+gzcat ~/data/genbank-data/human/refGene.txt.gz | sort -k2 > ~/data/genbank-data/human/sorted_refGene
+
 grep ^9606 ~/data/genbank-data/gene2refseq | grep "Reference GRCh38" | grep "NC_" > ~/data/genbank-data/human/gene2refseq
 cat ~/data/genbank-data/gene_info | grep ^9606  > ~/data/genbank-data/human/gene_info
 grep ^9606 ~/data/genbank-data/gene2pubmed > ~/data/genbank-data/human/gene2pubmed
@@ -5,6 +8,18 @@ grep ^9606 ~/data/genbank-data/gene2pubmed > ~/data/genbank-data/human/gene2pubm
 # output -> geneid \t citation_count
 cat ~/data/genbank-data/human/gene2pubmed | awk '{print $2}' | uniq -c | awk '{print $2 "\t" $1}' > ~/data/genbank-data/human/gene2pubmed-count
 
+# output -> geneid \t refseq_id
+cat ~/data/genbank-data/human/gene2refseq | awk -F $'\t' '{ split($4,a,"."); if (a[1] != "-") print $2 "\t" a[1];}' > ~/data/genbank-data/human/geneid_refseqid
+
+#output -> geneid \t refseq_id \t citation_count
+join ~/data/genbank-data/human/geneid_refseqid ~/data/genbank-data/human/gene2pubmed-count  | sort -k2 > ~/data/genbank-data/human/geneid_refseqid_count
+
+
+# output -> geneid \t refseq_id \t chr (5) \t strand(6) \t txStart(7) \t txEnd(8) \t cdsStart(9) \t cdsEnd (10) \t exonCount(11) \t exonStarts(12) \t exonEnds(13)
+join -1 2 -2 2 ~/data/genbank-data/human/geneid_refseqid_count ~/data/genbank-data/human/sorted_refGene | awk '{ print $2 "\t" $1 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" $9 "\t" $10 "\t" $11 "\t" $12 "\t" $13 "\t" $3; }'   > ~/data/genbank-data/human/geneid_refGene_count
+
+
 # output -> geneid \t symbol \t gene_type \t name \t citation_count
 join -1 2 -2 1 -t $'\t' ~/data/genbank-data/human/gene_info ~/data/genbank-data/human/gene2pubmed-count | awk -F $'\t' '{print $1 "\t" $3 "\t" $10 "\t" $12 "\t" $16}' > ~/data/genbank-data/human/gene_subinfo_citation_count
+
 
