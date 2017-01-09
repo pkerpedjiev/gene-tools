@@ -1,3 +1,10 @@
-grep ^9606 ~/data/genbank-data/gene2refseq | grep "Reference GRCh38" | grep "NC_" > ~/data/genbank-data/human/human_gene2refseq
-cat ~/data/genbank-data/gene_info | grep ^9606  > ~/data/genbank-data/human/human_gene_info
-grep ^9606 ~/data/genbank-data/gene2pubmed > ~/data/genbank-data/human/human_gene2pubmed
+grep ^9606 ~/data/genbank-data/gene2refseq | grep "Reference GRCh38" | grep "NC_" > ~/data/genbank-data/human/gene2refseq
+cat ~/data/genbank-data/gene_info | grep ^9606  > ~/data/genbank-data/human/gene_info
+grep ^9606 ~/data/genbank-data/gene2pubmed > ~/data/genbank-data/human/gene2pubmed
+
+# output -> geneid \t citation_count
+cat ~/data/genbank-data/human/gene2pubmed | awk '{print $2}' | uniq -c | awk '{print $2 "\t" $1}' > ~/data/genbank-data/human/gene2pubmed-count
+
+# output -> geneid \t symbol \t gene_type \t name \t citation_count
+join -1 2 -2 1 -t $'\t' ~/data/genbank-data/human/gene_info ~/data/genbank-data/human/gene2pubmed-count | awk -F $'\t' '{print $1 "\t" $3 "\t" $10 "\t" $12 "\t" $16}' > ~/data/genbank-data/human/gene_subinfo_citation_count
+
