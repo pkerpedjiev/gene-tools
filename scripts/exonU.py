@@ -63,9 +63,8 @@ def main():
         geneDesc = words[9]
         cdsStart = words[10]
         cdsEnd = words[11]
-        numExons = words[12]
-        exonStarts = words[13]
-        exonEnds = words[14]
+        exonStarts = words[12]
+        exonEnds = words[13]
 
         txStarts[geneId] = min(txStarts[geneId], int(txStart))
         txEnds[geneId] = max(txEnds[geneId], int(txEnd))
@@ -94,7 +93,7 @@ def main():
         output = "\t".join(map(str, [geneChrs[geneId], txStarts[geneId], txEnds[geneId],
                             geneNames[geneId], geneScores[geneId], geneStrands[geneId],
                             'union_' + geneId, geneId, geneTypes[geneId], geneDescs[geneId],
-                            cdsStarts[geneId], cdsEnds[geneId], len(exonUnions[geneId]),
+                            cdsStarts[geneId], cdsEnds[geneId], 
                             ",".join([str(e[0]) for e in sorted(exonUnions[geneId])]),
                             ",".join([str(e[1]) for e in sorted(exonUnions[geneId])])]))
         print(output)
