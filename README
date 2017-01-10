@@ -10,7 +10,7 @@ grep ^9606 ~/data/genbank-data/gene2pubmed > ~/data/genbank-data/human/gene2pubm
 cat ~/data/genbank-data/human/gene2pubmed | awk '{print $2}' | uniq -c | awk '{print $2 "\t" $1}' > ~/data/genbank-data/human/gene2pubmed-count
 
 # output -> geneid \t refseq_id
-cat ~/data/genbank-data/human/gene2refseq | awk -F $'\t' '{ split($4,a,"."); if (a[1] != "-") print $2 "\t" a[1];}' > ~/data/genbank-data/human/geneid_refseqid
+cat ~/data/genbank-data/human/gene2refseq | awk -F $'\t' '{ split($4,a,"."); if (a[1] != "-") print $2 "\t" a[1];}' | uniq  > ~/data/genbank-data/human/geneid_refseqid
 
 #output -> geneid \t refseq_id \t citation_count
 join ~/data/genbank-data/human/geneid_refseqid ~/data/genbank-data/human/gene2pubmed-count  | sort -k2 > ~/data/genbank-data/human/geneid_refseqid_count
@@ -25,25 +25,25 @@ join -1 2 -2 1 -t $'\t' ~/data/genbank-data/human/gene_info ~/data/genbank-data/
 
 
 # 1: chr (chr1)
-# 2: strand (+)
-# 3: txStart (52301201)
-# 4: txEnd (52317145)
-# 5: refseqId (NM_000020)
-# 6: geneId (94)
-# 7: geneName (ACVRL1)
-# 8: geneType (protein-coding)
-# 9: geneDesc (activin A receptor type II-like 1)
-# 10: cdsStart (52306258)
-# 11: cdsEnd (52314677)
-# 12: exonCount (10)
-# 13: exonStarts (52301201,52306253,52306882,52307342,52307757,52308222,52309008,52309819,52312768,52314542,)
-# 14: exonEnds (52301479,52306319,52307134,52307554,52307857,52308369,52309284,52310017,52312899,52317145,)
-# 15: citationCount (123)
+# 2: txStart (52301201) [9]
+# 3: txEnd (52317145) [10]
+# 4: geneName (ACVRL1)   [2]
+# 5: citationCount (123) [16]
+# 6: strand (+)  [8]
+# 7: refseqId (NM_000020)
+# 8: geneId (94) [1]
+# 9: geneType (protein-coding)
+# 10: geneDesc (activin A receptor type II-like 1)
+# 11: cdsStart (52306258)
+# 12: cdsEnd (52314677)
+# 13: exonCount (10)
+# 14: exonStarts (52301201,52306253,52306882,52307342,52307757,52308222,52309008,52309819,52312768,52314542,)
+# 15: exonEnds (52301479,52306319,52307134,52307554,52307857,52308369,52309284,52310017,52312899,52317145,)
 
-join -t $'\t' ~/data/genbank-data/human/gene_subinfo_citation_count ~/data/genbank-data/human/geneid_refGene_count | awk -F $'\t' '{print $7 "\t" $8 "\t" $9 "\t" $10 "\t" $6 "\t" $1 "\t" $2 "\t" $3 "\t" $4 "\t" $11 "\t" $12 "\t" $13 "\t" $14 "\t" $15 "\t" $16}' > ~/data/genbank-data/human/geneInfo_refGene_count
+join -t $'\t' ~/data/genbank-data/human/gene_subinfo_citation_count ~/data/genbank-data/human/geneid_refGene_count | awk -F $'\t' '{print $7 "\t" $9 "\t" $10 "\t" $2 "\t" $16 "\t" $8 "\t" $6 "\t" $1 "\t" $3 "\t" $4 "\t" $11 "\t" $12 "\t" $13 "\t" $14 "\t" $15}' > ~/data/genbank-data/human/geneAnnotations.bed
 
+python scripts/exonU.py ~/data/genbank-data/human/geneAnnotations.bed > ~/data/genbank-data/human/geneAnnotationsExonUnions.bed
 
-pip install negspy
-
+# pip install negspy
 # convert chromosome positions to genome positions
 # cat ~/data/genbank-data/human/geneid_refGene_count | chr_pos_to_genome_pos.py -c 3:5,3:6,3:7,3:8,3:10,3:11 > ~/data/genbank-data/human/genome_geneid_refGene_count
